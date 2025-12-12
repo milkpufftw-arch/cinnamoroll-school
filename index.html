@@ -1,836 +1,591 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinnamoroll's Word Party</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <!-- Babel -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinnamoroll's Word Party</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-    <style>
-        /* 字體：圓潤可愛風 */
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Varela+Round&family=Zen+Maru+Gothic:wght@400;700&display=swap');
+    <style>
+        /* 字體：圓潤可愛風 */
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Varela+Round&family=Zen+Maru+Gothic:wght@400;700&display=swap');
 
-        :root {
-            /* 依據圖片吸取的配色 */
-            --cinna-blue: #89cff0;       /* 圖片中緞帶的藍 */
-            --cinna-light-blue: #d0f0fd; /* 圖片背景淺藍 */
-            --cinna-white: #ffffff;
-            --cinna-rose: #f4c2c2;       /* 圖片中玫瑰的粉 */
-            --cinna-text: #6b8cce;       /* 深藍色文字 */
-            
-            /* 老師後台專用紫色系 */
-            --teacher-purple: #d8b4fe;
-            --teacher-bg: #f3e8ff;
-            --teacher-text: #9333ea;
-        }
+        :root {
+            /* 依據圖片吸取的配色 */
+            --cinna-blue: #89cff0;       /* 圖片中緞帶的藍 */
+            --cinna-light-blue: #d0f0fd; /* 圖片背景淺藍 */
+            --cinna-white: #ffffff;
+            --cinna-rose: #f4c2c2;       /* 圖片中玫瑰的粉 */
+            --cinna-text: #6b8cce;       /* 深藍色文字 */
+            
+            /* 老師後台專用紫色系 */
+            --teacher-purple: #d8b4fe;
+            --teacher-bg: #f3e8ff;
+            --teacher-text: #9333ea;
+        }
 
-        body {
-            background-color: var(--cinna-light-blue);
-            color: var(--cinna-text);
-            font-family: 'Zen Maru Gothic', 'Varela Round', sans-serif;
-            margin: 0;
-            overflow-x: hidden;
-            
-            /* 背景圖案：模仿圖片中的玫瑰與十字縫線 */
-            background-image: 
-                radial-gradient(circle, var(--cinna-white) 20%, transparent 20%),
-                radial-gradient(circle, var(--cinna-white) 20%, transparent 20%);
-            background-size: 40px 40px;
-            background-position: 0 0, 20px 20px;
-        }
+        body {
+            background-color: var(--cinna-light-blue);
+            color: var(--cinna-text);
+            font-family: 'Zen Maru Gothic', 'Varela Round', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            
+            /* 背景圖案：模仿圖片中的玫瑰與十字縫線 */
+            background-image: 
+                radial-gradient(circle, var(--cinna-white) 20%, transparent 20%),
+                radial-gradient(circle, var(--cinna-white) 20%, transparent 20%);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+        }
 
-        /* 裝飾性漂浮背景 */
-        .bg-decoration {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            opacity: 0.6;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='30' font-size='20'%3E🌹%3C/text%3E%3Ctext x='40' y='50' font-size='15' fill='%2389cff0'%3E✕%3C/text%3E%3C/svg%3E");
-        }
+        /* 裝飾性漂浮背景 */
+        .bg-decoration {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.6;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='30' font-size='20'%3E🌹%3C/text%3E%3Ctext x='40' y='50' font-size='15' fill='%2389cff0'%3E✕%3C/text%3E%3C/svg%3E");
+        }
 
-        /* --- 核心卡片風格：蕾絲 + 縫線 --- */
-        .lace-card {
-            background: var(--cinna-white);
-            border-radius: 30px;
-            /* 雙層邊框模擬蕾絲與縫線 */
-            border: 3px dashed var(--cinna-blue); 
-            box-shadow: 
-                0 0 0 8px white, /* 內層白邊 */
-                0 0 0 10px var(--cinna-light-blue), /* 外層淺藍邊 */
-                0 10px 20px rgba(137, 207, 240, 0.3); /* 柔和陰影 */
-            position: relative;
-            margin: 15px; /* 留空間給 box-shadow */
-            transition: transform 0.3s ease;
-        }
+        /* --- 核心卡片風格：蕾絲 + 縫線 --- */
+        .lace-card {
+            background: var(--cinna-white);
+            border-radius: 30px;
+            /* 雙層邊框模擬蕾絲與縫線 */
+            border: 3px dashed var(--cinna-blue); 
+            box-shadow: 
+                0 0 0 8px white, /* 內層白邊 */
+                0 0 0 10px var(--cinna-light-blue), /* 外層淺藍邊 */
+                0 10px 20px rgba(137, 207, 240, 0.3); /* 柔和陰影 */
+            position: relative;
+            margin: 15px; /* 留空間給 box-shadow */
+            transition: transform 0.3s ease;
+        }
 
-        .lace-card:hover {
-            transform: translateY(-5px);
-        }
+        .lace-card:hover {
+            transform: translateY(-5px);
+        }
 
-        /* 卡片標題區：模仿緞帶 */
-        .ribbon-header {
-            background: var(--cinna-light-blue);
-            margin: 10px;
-            padding: 10px 20px;
-            border-radius: 20px;
-            border: 2px dotted var(--cinna-blue);
-            color: var(--cinna-text);
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        /* 卡片標題區：模仿緞帶 */
+        .ribbon-header {
+            background: var(--cinna-light-blue);
+            margin: 10px;
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 2px dotted var(--cinna-blue);
+            color: var(--cinna-text);
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-        /* 輸入框：縫線風格 */
-        .stitch-input {
-            border: 2px dashed var(--cinna-blue);
-            border-radius: 25px;
-            padding: 15px;
-            outline: none;
-            color: var(--cinna-text);
-            background: #fdfeff;
-            font-family: 'Fredoka', sans-serif;
-            transition: all 0.3s;
-        }
-        .stitch-input:focus {
-            border-color: var(--cinna-rose);
-            box-shadow: 0 0 0 4px rgba(244, 194, 194, 0.3);
-        }
+        /* 輸入框：縫線風格 */
+        .stitch-input {
+            border: 2px dashed var(--cinna-blue);
+            border-radius: 25px;
+            padding: 15px;
+            outline: none;
+            color: var(--cinna-text);
+            background: #fdfeff;
+            font-family: 'Fredoka', sans-serif;
+            transition: all 0.3s;
+        }
+        .stitch-input:focus {
+            border-color: var(--cinna-rose);
+            box-shadow: 0 0 0 4px rgba(244, 194, 194, 0.3);
+        }
 
-        /* 按鈕：緞帶蝴蝶結風格 */
-        .ribbon-btn {
-            background: var(--cinna-blue);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 24px;
-            font-family: 'Fredoka', sans-serif;
-            font-weight: bold;
-            font-size: 1.1rem;
-            cursor: pointer;
-            position: relative;
-            box-shadow: 0 4px 0 #5badde; /* 立體感 */
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .ribbon-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 0 #5badde;
-            filter: brightness(1.05);
-        }
-        .ribbon-btn:active {
-            transform: translateY(4px);
-            box-shadow: none;
-        }
-        .ribbon-btn:disabled {
-            background: #cbd5e1;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
+        /* 按鈕：緞帶蝴蝶結風格 */
+        .ribbon-btn {
+            background: var(--cinna-blue);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 4px 0 #5badde; /* 立體感 */
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .ribbon-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #5badde;
+            filter: brightness(1.05);
+        }
+        .ribbon-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+        .ribbon-btn:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
 
-        .btn-rose {
-            background: var(--cinna-rose);
-            box-shadow: 0 4px 0 #e09ba0;
-        }
-        .btn-rose:hover:not(:disabled) {
-            box-shadow: 0 6px 0 #e09ba0;
-        }
+        .btn-rose {
+            background: var(--cinna-rose);
+            box-shadow: 0 4px 0 #e09ba0;
+        }
+        .btn-rose:hover:not(:disabled) {
+            box-shadow: 0 6px 0 #e09ba0;
+        }
 
-        /* 圖片容器：加上可愛相框效果 */
-        .photo-frame {
-            padding: 10px;
-            background: white;
-            border: 2px solid var(--cinna-blue);
-            border-radius: 20px;
-            transform: rotate(-2deg);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            width: 280px; /* 固定寬度 */
-            height: auto;
-        }
-        .photo-frame img {
-            border-radius: 15px;
-            display: block;
-            width: 100%;
-        }
+        /* 圖片容器：加上可愛相框效果 */
+        .photo-frame {
+            padding: 10px;
+            background: white;
+            border: 2px solid var(--cinna-blue);
+            border-radius: 20px;
+            transform: rotate(-2deg);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            width: 280px; /* 固定寬度 */
+            height: auto;
+        }
+        .photo-frame img {
+            border-radius: 15px;
+            display: block;
+            width: 100%;
+        }
 
-        /* Loading 動畫 */
-        .floating { animation: float 3s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        
-        /* Spinner */
-        .spin-slow { animation: spin 2s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Loading 動畫 */
+        .floating { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        
+        /* Spinner */
+        .spin-slow { animation: spin 2s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    </style>
+    </style>
 </head>
 <body>
-    <div class="bg-decoration"></div>
-    <div id="root"></div>
+    <div class="bg-decoration"></div>
+    <div id="root"></div>
 
-    <script type="text/babel">
-        // Icons
-        const Cloud = (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.5 19c0-1.7-1.3-3-3-3h-11c-1.7 0-3 1.3-3 3s1.3 3 3 3h11c1.7 0 3-1.3 3-3z"/><path d="M17.5 16c2.5 0 4.5-2 4.5-4.5S20 7 17.5 7c-.5 0-.9.1-1.3.2C15.6 3.6 12.1 1 8 1 3.6 1 0 4.6 0 9c0 .7.1 1.3.2 2C.1 11.4 0 11.7 0 12c0 2.2 1.8 4 4 4h13.5z"/></svg>;
-        const Star = (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>;
-        const Heart = (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>;
-        const Home = (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>;
-        const Book = (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>;
-        const Upload = (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>;
-        const Refresh = (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>;
-        const Trash2 = (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>;
+    <script type="text/babel">
+        // Icons
+        const Cloud = (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.5 19c0-1.7-1.3-3-3-3h-11c-1.7 0-3 1.3-3 3s1.3 3 3 3h11c1.7 0 3-1.3 3-3z"/><path d="M17.5 16c2.5 0 4.5-2 4.5-4.5S20 7 17.5 7c-.5 0-.9.1-1.3.2C15.6 3.6 12.1 1 8 1 3.6 1 0 4.6 0 9c0 .7.1 1.3.2 2C.1 11.4 0 11.7 0 12c0 2.2 1.8 4 4 4h13.5z"/></svg>;
+        const Star = (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>;
+        const Heart = (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>;
+        const Home = (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>;
+        const Book = (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>;
+        const Upload = (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>;
+        const Refresh = (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>;
+        const Trash2 = (p) => <svg {...p} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>;
 
-        // Firebase Setup
-        const firebaseConfig = {
-            apiKey: "AIzaSyDkoJbG3JxI9TkhByGaBAp0mWTxhkKnXIA",
-            authDomain: "vocabshooter.firebaseapp.com",
-            projectId: "vocabshooter",
-            storageBucket: "vocabshooter.firebasestorage.app",
-            messagingSenderId: "48437001558",
-            appId: "1:48437001558:web:94fde25d61759ad9b42af7"
-        };
-        
-        let auth, db, appId = 'vocabshooter'; 
-        try {
-            if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-                auth = firebase.auth();
-                db = firebase.firestore();
-            }
-        } catch (error) { console.error(error); }
+        // Firebase Setup
+        const firebaseConfig = {
+            apiKey: "AIzaSyDkoJbG3JxI9TkhByGaBAp0mWTxhkKnXIA",
+            authDomain: "vocabshooter.firebaseapp.com",
+            projectId: "vocabshooter",
+            storageBucket: "vocabshooter.firebasestorage.app",
+            messagingSenderId: "48437001558",
+            appId: "1:48437001558:web:94fde25d61759ad9b42af7"
+        };
+        
+        let auth, db, appId = 'vocabshooter'; 
+        try {
+            if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                db = firebase.firestore();
+            }
+        } catch (error) { console.error(error); }
 
-        const { useState, useEffect, useRef } = React;
-        
-        // 您的圖片設定：請確保 S__65208346.jpg 在同一個資料夾中
-        const YOUR_IMAGE_URL = "./S__65208346.jpg"; 
+        const { useState, useEffect, useRef } = React;
+        
+        // 您的圖片設定：請確保 S__65208346.jpg 在同一個資料夾中
+        const YOUR_IMAGE_URL = "./S__65208346.jpg"; 
 
-        const LoginScreen = ({ onLogin }) => {
-            const [input, setInput] = useState('');
-            return (
-                <div className="flex flex-col items-center justify-center min-h-screen relative z-50 px-4 py-10">
-                    <div className="photo-frame floating">
-                        <img src={YOUR_IMAGE_URL} alt="Cinnamoroll" 
-                            onError={(e) => {
-                                e.target.onerror = null; 
-                                // 這裡修改為：如果找不到圖片，就顯示一張網路上的可愛大耳狗，而不是醜醜的灰格子
-                                e.target.src='https://upload.wikimedia.org/wikipedia/en/2/29/Cinnamoroll.png';
-                                // e.target.parentElement.innerHTML += '<div class="text-xs text-center text-gray-400 mt-2">請確認圖片 S__65208346.jpg 在 GitHub 倉庫中</div>';
-                            }} 
-                        />
-                    </div>
-                    
-                    <div className="lace-card p-8 max-w-md w-full flex flex-col items-center">
-                        <h1 className="text-3xl font-bold text-[#89cff0] mb-2 text-center" style={{fontFamily: 'Fredoka'}}>
-                            Welcome to<br/>
-                            <span className="text-[#f4c2c2] text-4xl" style={{textShadow: '2px 2px 0px white'}}>Word Party</span>
-                        </h1>
-                        <p className="text-gray-400 text-sm mb-6 bg-blue-50 px-4 py-1 rounded-full border border-blue-100">
-                            Please enter your name 🎀
-                        </p>
-                        
-                        <form onSubmit={(e) => { e.preventDefault(); if(input.trim()) onLogin(input.trim()); }} className="w-full flex flex-col gap-4">
-                            <input 
-                                type="text" 
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                placeholder="Your Name..."
-                                className="stitch-input w-full text-center text-xl"
-                                autoFocus
-                            />
-                            <button className="ribbon-btn w-full">
-                                Let's Start! 🎈
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            );
-        };
+        const LoginScreen = ({ onLogin }) => {
+            const [input, setInput] = useState('');
+            return (
+                <div className="flex flex-col items-center justify-center min-h-screen relative z-50 px-4 py-10">
+                    <div className="photo-frame floating">
+                        <img src={YOUR_IMAGE_URL} alt="Cinnamoroll" 
+                            onError={(e) => {
+                                e.target.onerror = null; 
+                                e.target.src='https://upload.wikimedia.org/wikipedia/en/2/29/Cinnamoroll.png';
+                            }} 
+                        />
+                    </div>
+                    
+                    <div className="lace-card p-8 max-w-md w-full flex flex-col items-center">
+                        <h1 className="text-3xl font-bold text-[#89cff0] mb-2 text-center" style={{fontFamily: 'Fredoka'}}>
+                            Welcome to<br/>
+                            <span className="text-[#f4c2c2] text-4xl" style={{textShadow: '2px 2px 0px white'}}>Word Party</span>
+                        </h1>
+                        <p className="text-gray-400 text-sm mb-6 bg-blue-50 px-4 py-1 rounded-full border border-blue-100">
+                            Please enter your name 🎀
+                        </p>
+                        
+                        <form onSubmit={(e) => { e.preventDefault(); if(input.trim()) onLogin(input.trim()); }} className="w-full flex flex-col gap-4">
+                            <input 
+                                type="text" 
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                                placeholder="Your Name..."
+                                className="stitch-input w-full text-center text-xl"
+                                autoFocus
+                            />
+                            <button className="ribbon-btn w-full">
+                                Let's Start! 🎈
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            );
+        };
 
-        const MainMenu = ({ user, onSelectMode, onLogout }) => (
-            <div className="flex flex-col items-center justify-center min-h-screen z-50 relative px-4 gap-6 py-10">
-                <div className="absolute top-4 left-4 bg-white/80 px-4 py-2 rounded-full text-sm text-[#89cff0] font-bold border-2 border-[#89cff0] shadow-sm">
-                    Student: {user} 🎓
-                </div>
-                
-                <div className="text-center mb-4 mt-10">
-                    <h1 className="text-5xl font-bold text-[#89cff0]" style={{fontFamily: 'Fredoka', textShadow: '4px 4px 0px white'}}>
-                        Cloud School
-                    </h1>
-                </div>
+        const MainMenu = ({ user, onSelectMode, onLogout }) => (
+            <div className="flex flex-col items-center justify-center min-h-screen z-50 relative px-4 gap-6 py-10">
+                <div className="absolute top-4 left-4 bg-white/80 px-4 py-2 rounded-full text-sm text-[#89cff0] font-bold border-2 border-[#89cff0] shadow-sm">
+                    Student: {user} 🎓
+                </div>
+                
+                <div className="text-center mb-4 mt-10">
+                    <h1 className="text-5xl font-bold text-[#89cff0]" style={{fontFamily: 'Fredoka', textShadow: '4px 4px 0px white'}}>
+                        Cloud School
+                    </h1>
+                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-3xl">
-                    <button onClick={() => onSelectMode('practice')} className="lace-card p-0 h-auto min-h-[16rem] group text-left flex flex-col overflow-hidden">
-                        <div className="ribbon-header">
-                            <span>Study Room</span>
-                            <Book className="w-5 h-5" />
-                        </div>
-                        <div className="p-8 flex-1 flex flex-col justify-center relative z-10">
-                            <span className="text-4xl font-bold text-[#89cff0] mb-2" style={{fontFamily: 'Fredoka'}}>PRACTICE</span>
-                            <span className="text-gray-400">Review your words gently!</span>
-                        </div>
-                        <div className="absolute -bottom-6 -right-6 text-blue-100 opacity-60 transform rotate-12 group-hover:scale-110 transition-transform">
-                            <Cloud className="w-40 h-40" fill="currentColor" />
-                        </div>
-                    </button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-3xl">
+                    <button onClick={() => onSelectMode('practice')} className="lace-card p-0 h-auto min-h-[16rem] group text-left flex flex-col overflow-hidden">
+                        <div className="ribbon-header">
+                            <span>Study Room</span>
+                            <Book className="w-5 h-5" />
+                        </div>
+                        <div className="p-8 flex-1 flex flex-col justify-center relative z-10">
+                            <span className="text-4xl font-bold text-[#89cff0] mb-2" style={{fontFamily: 'Fredoka'}}>PRACTICE</span>
+                            <span className="text-gray-400">Review your words gently!</span>
+                        </div>
+                        <div className="absolute -bottom-6 -right-6 text-blue-100 opacity-60 transform rotate-12 group-hover:scale-110 transition-transform">
+                            <Cloud className="w-40 h-40" fill="currentColor" />
+                        </div>
+                    </button>
 
-                    <button onClick={() => onSelectMode('game')} className="lace-card p-0 h-auto min-h-[16rem] group text-left flex flex-col overflow-hidden" style={{borderColor: '#f4c2c2'}}>
-                        <div className="ribbon-header" style={{borderColor: '#f4c2c2', color: '#f4c2c2', background: '#fff0f5'}}>
-                            <span>Sky Adventure</span>
-                            <Star className="w-5 h-5" />
-                        </div>
-                        <div className="p-8 flex-1 flex flex-col justify-center relative z-10">
-                            <span className="text-4xl font-bold text-[#f4c2c2] mb-2" style={{fontFamily: 'Fredoka'}}>GAME</span>
-                            <span className="text-gray-400">Catch the flying words!</span>
-                        </div>
-                        <div className="absolute -bottom-6 -right-6 text-pink-100 opacity-60 transform rotate-12 group-hover:scale-110 transition-transform">
-                            <Heart className="w-40 h-40" fill="currentColor" />
-                        </div>
-                    </button>
-                    
-                     {user === 'admin' && (
-                        <button onClick={() => onSelectMode('admin')} className="md:col-span-2 lace-card p-4 flex items-center justify-center gap-2 hover:bg-purple-50 transition-colors" style={{borderColor: '#d8b4fe'}}>
-                            <span className="text-purple-400 font-bold tracking-widest">⚙️ TEACHER'S DASHBOARD</span>
-                        </button>
-                    )}
-                </div>
+                    <button onClick={() => onSelectMode('game')} className="lace-card p-0 h-auto min-h-[16rem] group text-left flex flex-col overflow-hidden" style={{borderColor: '#f4c2c2'}}>
+                        <div className="ribbon-header" style={{borderColor: '#f4c2c2', color: '#f4c2c2', background: '#fff0f5'}}>
+                            <span>Sky Adventure</span>
+                            <Star className="w-5 h-5" />
+                        </div>
+                        <div className="p-8 flex-1 flex flex-col justify-center relative z-10">
+                            <span className="text-4xl font-bold text-[#f4c2c2] mb-2" style={{fontFamily: 'Fredoka'}}>GAME</span>
+                            <span className="text-gray-400">Catch the flying words!</span>
+                        </div>
+                        <div className="absolute -bottom-6 -right-6 text-pink-100 opacity-60 transform rotate-12 group-hover:scale-110 transition-transform">
+                            <Heart className="w-40 h-40" fill="currentColor" />
+                        </div>
+                    </button>
+                    
+                     {user === 'admin' && (
+                        <button onClick={() => onSelectMode('admin')} className="md:col-span-2 lace-card p-4 flex items-center justify-center gap-2 hover:bg-purple-50 transition-colors" style={{borderColor: '#d8b4fe'}}>
+                            <span className="text-purple-400 font-bold tracking-widest">⚙️ TEACHER'S DASHBOARD</span>
+                        </button>
+                    )}
+                </div>
 
-                <button onClick={onLogout} className="mt-4 bg-white text-gray-400 hover:text-[#f4c2c2] px-6 py-2 rounded-full text-sm font-bold border-2 border-transparent hover:border-[#f4c2c2] transition-all flex items-center gap-2">
-                    <Home className="w-4 h-4" /> Log Out
-                </button>
-            </div>
-        );
+                <button onClick={onLogout} className="mt-4 bg-white text-gray-400 hover:text-[#f4c2c2] px-6 py-2 rounded-full text-sm font-bold border-2 border-transparent hover:border-[#f4c2c2] transition-all flex items-center gap-2">
+                    <Home className="w-4 h-4" /> Log Out
+                </button>
+            </div>
+        );
 
-        // 遊戲模式組件 (GameMode)
-        const GameMode = ({ user, activeWords, onBack, onSaveScore }) => {
-            const [queue, setQueue] = useState([]);
-            const [currentIndex, setCurrentIndex] = useState(0);
-            const [input, setInput] = useState('');
-            const [score, setScore] = useState(0);
-            const [feedback, setFeedback] = useState(null); 
-            const [attempts, setAttempts] = useState(0);
-            const [wrongWords, setWrongWords] = useState([]);
-            const [gameState, setGameState] = useState('start');
-            const [exitConfirm, setExitConfirm] = useState(false);
-            const inputRef = useRef(null);
+        // 遊戲模式組件 (GameMode)
+        const GameMode = ({ user, activeWords, onBack, onSaveScore }) => {
+            const [queue, setQueue] = useState([]);
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [input, setInput] = useState('');
+            const [score, setScore] = useState(0);
+            const [feedback, setFeedback] = useState(null); 
+            const [attempts, setAttempts] = useState(0);
+            const [wrongWords, setWrongWords] = useState([]);
+            const [gameState, setGameState] = useState('start');
+            const [exitConfirm, setExitConfirm] = useState(false);
+            const inputRef = useRef(null);
 
-             useEffect(() => {
-                if (gameState === 'playing' && activeWords.length > 0) {
-                    const shuffled = [...activeWords].sort(() => 0.5 - Math.random()).slice(0, 10);
-                    setQueue(shuffled);
-                    setCurrentIndex(0);
-                    setScore(0);
-                    setWrongWords([]);
-                    setAttempts(0);
-                    setExitConfirm(false);
-                }
-            }, [gameState]);
+             useEffect(() => {
+                if (gameState === 'playing' && activeWords.length > 0) {
+                    const shuffled = [...activeWords].sort(() => 0.5 - Math.random()).slice(0, 10);
+                    setQueue(shuffled);
+                    setCurrentIndex(0);
+                    setScore(0);
+                    setWrongWords([]);
+                    setAttempts(0);
+                    setExitConfirm(false);
+                }
+            }, [gameState]);
 
-             const handleFire = () => {
-                if (!input.trim() || !queue[currentIndex]) return;
-                const currentWord = queue[currentIndex];
-                if (input.trim().toLowerCase() === currentWord.word.toLowerCase()) {
-                    setScore(p => p + 100);
-                    setFeedback('success');
-                    setTimeout(() => {
-                        setFeedback(null); setInput(''); setAttempts(0);
-                        if (currentIndex + 1 < queue.length) setCurrentIndex(p => p + 1);
-                        else { onSaveScore(score + 100, wrongWords); setGameState('end'); }
-                    }, 800);
-                } else {
-                     const newAttempts = attempts + 1;
-                    if (newAttempts >= 3) {
-                        setFeedback('failed');
-                        setWrongWords(prev => [...prev, currentWord.word]);
-                        setTimeout(() => {
-                             setFeedback(null); setInput(''); setAttempts(0);
-                             if (currentIndex + 1 < queue.length) setCurrentIndex(p => p + 1);
-                             else { onSaveScore(score, [...wrongWords, currentWord.word]); setGameState('end'); }
-                        }, 2000);
-                    } else {
-                        setAttempts(newAttempts);
-                        setFeedback('error');
-                        setTimeout(() => setFeedback(null), 500);
-                        setInput('');
-                    }
-                }
-            };
+             const handleFire = () => {
+                if (!input.trim() || !queue[currentIndex]) return;
+                const currentWord = queue[currentIndex];
+                if (input.trim().toLowerCase() === currentWord.word.toLowerCase()) {
+                    setScore(p => p + 100);
+                    setFeedback('success');
+                    setTimeout(() => {
+                        setFeedback(null); setInput(''); setAttempts(0);
+                        if (currentIndex + 1 < queue.length) setCurrentIndex(p => p + 1);
+                        else { onSaveScore(score + 100, wrongWords); setGameState('end'); }
+                    }, 800);
+                } else {
+                      const newAttempts = attempts + 1;
+                    if (newAttempts >= 3) {
+                        setFeedback('failed');
+                        setWrongWords(prev => [...prev, currentWord.word]);
+                        setTimeout(() => {
+                             setFeedback(null); setInput(''); setAttempts(0);
+                             if (currentIndex + 1 < queue.length) setCurrentIndex(p => p + 1);
+                             else { onSaveScore(score, [...wrongWords, currentWord.word]); setGameState('end'); }
+                        }, 2000);
+                    } else {
+                        setAttempts(newAttempts);
+                        setFeedback('error');
+                        setTimeout(() => setFeedback(null), 500);
+                        setInput('');
+                    }
+                }
+            };
 
-            if (gameState === 'start') return (
-                <div className="flex flex-col items-center justify-center min-h-screen z-50 px-4">
-                    <div className="lace-card p-10 max-w-md w-full text-center" style={{borderColor: '#f4c2c2'}}>
-                        <div className="text-6xl mb-4 floating">🎀</div>
-                        <h2 className="text-3xl text-[#f4c2c2] font-bold mb-4" style={{fontFamily: 'Fredoka'}}>Ready?</h2>
-                        <div className="text-gray-500 mb-8 bg-pink-50 p-4 rounded-xl border border-pink-100">
-                            Look at the Chinese, Type the English!<br/>
-                            <span className="text-xs text-pink-400">You have 3 hearts per word ❤️</span>
-                        </div>
-                        <div className="flex gap-4 justify-center">
-                            <button onClick={onBack} className="px-6 py-3 rounded-full border-2 border-gray-300 text-gray-400 font-bold hover:bg-white">Back</button>
-                            <button onClick={() => setGameState('playing')} className="ribbon-btn btn-rose px-8">Start Game! 🚀</button>
-                        </div>
-                    </div>
-                </div>
-            );
+            if (gameState === 'start') return (
+                <div className="flex flex-col items-center justify-center min-h-screen z-50 px-4">
+                    <div className="lace-card p-10 max-w-md w-full text-center" style={{borderColor: '#f4c2c2'}}>
+                        <div className="text-6xl mb-4 floating">🎀</div>
+                        <h2 className="text-3xl text-[#f4c2c2] font-bold mb-4" style={{fontFamily: 'Fredoka'}}>Ready?</h2>
+                        <div className="text-gray-500 mb-8 bg-pink-50 p-4 rounded-xl border border-pink-100">
+                            Look at the Chinese, Type the English!<br/>
+                            <span className="text-xs text-pink-400">You have 3 hearts per word ❤️</span>
+                        </div>
+                        <div className="flex gap-4 justify-center">
+                            <button onClick={onBack} className="px-6 py-3 rounded-full border-2 border-gray-300 text-gray-400 font-bold hover:bg-white">Back</button>
+                            <button onClick={() => setGameState('playing')} className="ribbon-btn btn-rose px-8">Start Game! 🚀</button>
+                        </div>
+                    </div>
+                </div>
+            );
 
-            if (gameState === 'end') return (
-                <div className="flex flex-col items-center justify-center min-h-screen z-50 px-4 py-10">
-                    <div className="photo-frame w-48 mb-4 rotate-2">
-                        {/* 這裡也加上 fallback 機制 */}
-                        <img src={YOUR_IMAGE_URL} alt="Celebration" 
-                            onError={(e)=>{
-                                e.target.onerror = null; 
-                                e.target.src='https://upload.wikimedia.org/wikipedia/en/2/29/Cinnamoroll.png';
-                            }}
-                        />
-                    </div>
+            if (gameState === 'end') return (
+                <div className="flex flex-col items-center justify-center min-h-screen z-50 px-4 py-10">
+                    <div className="photo-frame w-48 mb-4 rotate-2">
+                        {/* 這裡也加上 fallback 機制 */}
+                        <img src={YOUR_IMAGE_URL} alt="Celebration" 
+                            onError={(e)=>{
+                                e.target.onerror = null; 
+                                e.target.src='https://upload.wikimedia.org/wikipedia/en/2/29/Cinnamoroll.png';
+                            }}
+                        />
+                    </div>
 
-                    <div className="lace-card p-8 text-center max-w-md w-full" style={{borderColor: '#86efac'}}>
-                        <h2 className="text-3xl text-green-500 font-bold mb-2" style={{fontFamily: 'Fredoka'}}>Congratulations!</h2>
-                        <div className="text-5xl text-green-400 font-bold font-mono mb-6">{score} PTS</div>
-                        <div className="flex gap-4 justify-center">
-                            <button onClick={onBack} className="ribbon-btn" style={{backgroundColor: '#86efac', boxShadow: '0 4px 0 #4ade80'}}>Menu</button>
-                            <button onClick={() => setGameState('start')} className="ribbon-btn">Play Again</button>
-                        </div>
-                    </div>
-                </div>
-            );
-            
-            if(!queue[currentIndex]) return <div>Loading...</div>;
-            const currentWord = queue[currentIndex];
+                    <div className="lace-card p-8 text-center max-w-md w-full" style={{borderColor: '#86efac'}}>
+                        <h2 className="text-3xl text-green-500 font-bold mb-2" style={{fontFamily: 'Fredoka'}}>Congratulations!</h2>
+                        <div className="text-5xl text-green-400 font-bold font-mono mb-6">{score} PTS</div>
+                        <div className="flex gap-4 justify-center">
+                            <button onClick={onBack} className="ribbon-btn" style={{backgroundColor: '#86efac', boxShadow: '0 4px 0 #4ade80'}}>Menu</button>
+                            <button onClick={() => setGameState('start')} className="ribbon-btn">Play Again</button>
+                        </div>
+                    </div>
+                </div>
+            );
+            
+            if(!queue[currentIndex]) return <div>Loading...</div>;
+            const currentWord = queue[currentIndex];
 
-            return (
-                 <div className="flex flex-col items-center justify-center min-h-screen w-full relative z-50 p-4 py-10">
-                     <div className="lace-card w-full max-w-2xl transition-all duration-300 relative">
-                        {/* Game UI */}
-                        <div className="absolute -top-6 -left-2 bg-white border-2 border-blue-200 px-4 py-1 rounded-full text-blue-400 font-bold shadow-sm z-10">
-                             Score: {score}
-                        </div>
-                        <div className="absolute -top-6 -right-2 bg-white border-2 border-pink-200 px-4 py-1 rounded-full text-pink-400 font-bold shadow-sm z-10">
-                             {currentIndex + 1} / 10
-                        </div>
+            return (
+                 <div className="flex flex-col items-center justify-center min-h-screen w-full relative z-50 p-4 py-10">
+                      <div className="lace-card w-full max-w-2xl transition-all duration-300 relative">
+                        {/* Game UI */}
+                        <div className="absolute -top-6 -left-2 bg-white border-2 border-blue-200 px-4 py-1 rounded-full text-blue-400 font-bold shadow-sm z-10">
+                             Score: {score}
+                        </div>
+                        <div className="absolute -top-6 -right-2 bg-white border-2 border-pink-200 px-4 py-1 rounded-full text-pink-400 font-bold shadow-sm z-10">
+                             {currentIndex + 1} / 10
+                        </div>
 
-                        <div className="p-12 text-center">
-                            {feedback === 'failed' ? (
-                                <div className="text-red-400 font-bold text-2xl animate-pulse">The answer was: {currentWord.word}</div>
-                            ) : (
-                                <>
-                                    <div className="text-xs text-blue-300 font-bold mb-2 bg-blue-50 inline-block px-3 py-1 rounded-full">TRANSLATE THIS</div>
-                                    <h1 className="text-5xl font-bold text-gray-700 mb-6 drop-shadow-sm" style={{fontFamily: 'Zen Maru Gothic'}}>{currentWord.meaning}</h1>
-                                    <div className="flex justify-center gap-1 mb-8">
-                                        {[...Array(3)].map((_, i) => (
-                                            <Heart key={i} className={`w-6 h-6 ${i < (3 - attempts) ? 'text-[#f4c2c2] fill-current' : 'text-gray-200'}`} />
-                                        ))}
-                                    </div>
-                                </>
-                            )}
-                            
-                            <input
-                                ref={inputRef}
-                                type="text"
-                                value={input}
-                                onChange={e => setInput(e.target.value)}
-                                onKeyDown={(e) => { if(e.key === 'Enter') handleFire(); }}
-                                disabled={feedback === 'failed' || feedback === 'success'}
-                                className={`stitch-input w-full text-center text-2xl tracking-wider ${feedback === 'error' ? 'border-red-300 bg-red-50' : ''}`}
-                                placeholder="Type answer..."
-                                autoFocus
-                            />
-                        </div>
-                        <div className="p-4 flex justify-center pb-8">
-                             <button onClick={handleFire} className="ribbon-btn w-2/3">Check Answer ✨</button>
-                        </div>
-                     </div>
-                     <button onClick={onBack} className="mt-6 text-gray-400 underline text-sm hover:text-red-400">Quit Game</button>
-                 </div>
-            );
-        };
+                        <div className="p-12 text-center">
+                            {feedback === 'failed' ? (
+                                <div className="text-red-400 font-bold text-2xl animate-pulse">The answer was: {currentWord.word}</div>
+                            ) : (
+                                <>
+                                    <div className="text-xs text-blue-300 font-bold mb-2 bg-blue-50 inline-block px-3 py-1 rounded-full">TRANSLATE THIS</div>
+                                    <h1 className="text-5xl font-bold text-gray-700 mb-6 drop-shadow-sm" style={{fontFamily: 'Zen Maru Gothic'}}>{currentWord.meaning}</h1>
+                                    <div className="flex justify-center gap-1 mb-8">
+                                        {[...Array(3)].map((_, i) => (
+                                            <Heart key={i} className={`w-6 h-6 ${i < (3 - attempts) ? 'text-[#f4c2c2] fill-current' : 'text-gray-200'}`} />
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                            
+                            <input
+                                ref={inputRef}
+                                type="text"
+                                value={input}
+                                onChange={e => setInput(e.target.value)}
+                                onKeyDown={(e) => { if(e.key === 'Enter') handleFire(); }}
+                                disabled={feedback === 'failed' || feedback === 'success'}
+                                className={`stitch-input w-full text-center text-2xl tracking-wider ${feedback === 'error' ? 'border-red-300 bg-red-50' : ''}`}
+                                placeholder="Type answer..."
+                                autoFocus
+                            />
+                        </div>
+                        <div className="p-4 flex justify-center pb-8">
+                             <button onClick={handleFire} className="ribbon-btn w-2/3">Check Answer ✨</button>
+                        </div>
+                      </div>
+                      <button onClick={onBack} className="mt-6 text-gray-400 underline text-sm hover:text-red-400">Quit Game</button>
+                 </div>
+            );
+        };
 
-        const ChapterSelect = ({ words, mode, onSelectChapter, onBack }) => {
-            const chapters = [...new Set(words.map(w => w.chapter || 'General'))].sort();
-            return (
-                <div className="min-h-screen p-4 flex flex-col items-center justify-center py-10">
-                     <div className="lace-card p-8 w-full max-w-2xl relative">
-                        <button onClick={onBack} className="absolute top-4 left-4 text-gray-400 hover:text-blue-400">&lt; Back</button>
-                        <h2 className="text-2xl font-bold text-[#89cff0] text-center mb-6" style={{fontFamily: 'Fredoka'}}>Select Unit 📖</h2>
-                        <div className="grid gap-4">
-                             <button onClick={() => onSelectChapter('ALL')} className="bg-yellow-50 border-2 border-yellow-200 text-yellow-500 p-4 rounded-xl font-bold hover:bg-yellow-100 flex items-center justify-between group">
-                                <span>👑 All Words Review</span>
-                                <Star className="w-6 h-6 group-hover:rotate-45 transition-transform"/>
-                             </button>
-                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                {chapters.map(chap => (
-                                    <button key={chap} onClick={() => onSelectChapter(chap)} className="bg-white border-2 border-[#d0f0fd] text-[#6b8cce] p-4 rounded-xl font-bold hover:border-[#89cff0] hover:bg-blue-50 transition-all">
-                                        {chap}
-                                        <div className="text-xs font-normal text-gray-400 mt-1">{words.filter(w=>(w.chapter||'General')===chap).length} Words</div>
-                                    </button>
-                                ))}
-                             </div>
-                        </div>
-                     </div>
-                </div>
-            );
-        };
+        const ChapterSelect = ({ words, mode, onSelectChapter, onBack }) => {
+            const chapters = [...new Set(words.map(w => w.chapter || 'General'))].sort();
+            return (
+                <div className="min-h-screen p-4 flex flex-col items-center justify-center py-10">
+                      <div className="lace-card p-8 w-full max-w-2xl relative">
+                        <button onClick={onBack} className="absolute top-4 left-4 text-gray-400 hover:text-blue-400">&lt; Back</button>
+                        <h2 className="text-2xl font-bold text-[#89cff0] text-center mb-6" style={{fontFamily: 'Fredoka'}}>Select Unit 📖</h2>
+                        <div className="grid gap-4">
+                             <button onClick={() => onSelectChapter('ALL')} className="bg-yellow-50 border-2 border-yellow-200 text-yellow-500 p-4 rounded-xl font-bold hover:bg-yellow-100 flex items-center justify-between group">
+                                <span>👑 All Words Review</span>
+                                <Star className="w-6 h-6 group-hover:rotate-45 transition-transform"/>
+                             </button>
+                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                {chapters.map(chap => (
+                                    <button key={chap} onClick={() => onSelectChapter(chap)} className="bg-white border-2 border-[#d0f0fd] text-[#6b8cce] p-4 rounded-xl font-bold hover:border-[#89cff0] hover:bg-blue-50 transition-all">
+                                        {chap}
+                                        <div className="text-xs font-normal text-gray-400 mt-1">{words.filter(w=>(w.chapter||'General')===chap).length} Words</div>
+                                    </button>
+                                ))}
+                             </div>
+                        </div>
+                      </div>
+                </div>
+            );
+        };
 
-        const PracticeMode = ({ activeWords, onBack }) => {
-             const [queue, setQueue] = useState([]);
-             const [currentIndex, setCurrentIndex] = useState(0);
-             const [input, setInput] = useState('');
-             const [feedback, setFeedback] = useState(null);
-             
-             useEffect(() => { if(activeWords.length) setQueue([...activeWords].sort(()=>0.5-Math.random()).slice(0,10)); }, [activeWords]);
-             
-             if(!queue.length) return <div>Loading...</div>;
-             if(currentIndex >= queue.length) return (
-                 <div className="min-h-screen flex items-center justify-center">
-                     <div className="lace-card p-10 text-center">
-                         <h2 className="text-2xl font-bold text-green-500 mb-4">Finished!</h2>
-                         <button onClick={onBack} className="ribbon-btn">Back</button>
-                     </div>
-                 </div>
-             );
+        const PracticeMode = ({ activeWords, onBack }) => {
+             const [queue, setQueue] = useState([]);
+             const [currentIndex, setCurrentIndex] = useState(0);
+             const [input, setInput] = useState('');
+             const [feedback, setFeedback] = useState(null);
+             
+             useEffect(() => { if(activeWords.length) setQueue([...activeWords].sort(()=>0.5-Math.random()).slice(0,10)); }, [activeWords]);
+             
+             if(!queue.length) return <div>Loading...</div>;
+             if(currentIndex >= queue.length) return (
+                 <div className="min-h-screen flex items-center justify-center">
+                     <div className="lace-card p-10 text-center">
+                         <h2 className="text-2xl font-bold text-green-500 mb-4">Finished!</h2>
+                         <button onClick={onBack} className="ribbon-btn">Back</button>
+                     </div>
+                 </div>
+             );
 
-             const currentWord = queue[currentIndex];
-             const handleCheck = (e) => {
-                 e.preventDefault();
-                 if(input.trim().toLowerCase() === currentWord.word.toLowerCase()) {
-                     setFeedback('success');
-                     setTimeout(()=>{ setFeedback(null); setInput(''); setCurrentIndex(p=>p+1); }, 800);
-                 } else {
-                     setFeedback('error'); setTimeout(()=>setFeedback(null), 500);
-                 }
-             };
+             const currentWord = queue[currentIndex];
+             const handleCheck = (e) => {
+                 e.preventDefault();
+                 if(input.trim().toLowerCase() === currentWord.word.toLowerCase()) {
+                     setFeedback('success');
+                     setTimeout(()=>{ setFeedback(null); setInput(''); setCurrentIndex(p=>p+1); }, 800);
+                 } else {
+                     setFeedback('error'); setTimeout(()=>setFeedback(null), 500);
+                 }
+             };
 
-             return (
-                 <div className="min-h-screen flex flex-col items-center justify-center p-4">
-                     <div className="lace-card w-full max-w-xl p-10 text-center relative">
-                         <div className="text-sm text-gray-400 mb-2">PRACTICE {currentIndex+1}/{queue.length}</div>
-                         <h2 className="text-4xl font-bold text-gray-700 mb-4">{currentWord.word}</h2>
-                         <div className="text-xl text-[#89cff0] mb-8 font-bold">{currentWord.meaning}</div>
-                         <form onSubmit={handleCheck}>
-                             <input value={input} onChange={e=>setInput(e.target.value)} className="stitch-input w-full text-center text-xl mb-4" placeholder="Type word..." autoFocus/>
-                             <button className="ribbon-btn w-full">Next</button>
-                         </form>
-                         <button onClick={onBack} className="absolute top-4 right-4 text-gray-300 hover:text-red-400">✕</button>
-                     </div>
-                 </div>
-             );
-        };
+             return (
+                 <div className="min-h-screen flex flex-col items-center justify-center p-4">
+                     <div className="lace-card w-full max-w-xl p-10 text-center relative">
+                         <div className="text-sm text-gray-400 mb-2">PRACTICE {currentIndex+1}/{queue.length}</div>
+                         <h2 className="text-4xl font-bold text-gray-700 mb-4">{currentWord.word}</h2>
+                         <div className="text-xl text-[#89cff0] mb-8 font-bold">{currentWord.meaning}</div>
+                         <form onSubmit={handleCheck}>
+                             <input value={input} onChange={e=>setInput(e.target.value)} className="stitch-input w-full text-center text-xl mb-4" placeholder="Type word..." autoFocus/>
+                             <button className="ribbon-btn w-full">Next</button>
+                         </form>
+                         <button onClick={onBack} className="absolute top-4 right-4 text-gray-300 hover:text-red-400">✕</button>
+                     </div>
+                 </div>
+             );
+        };
 
-        const AdminPanel = ({ words, setWords, onBack, onRefresh }) => {
-            const [newWord, setNewWord] = useState({ word: '', meaning: '', type: 'n.' });
-            const [currentTag, setCurrentTag] = useState('L1'); 
-            const [smartInput, setSmartInput] = useState('');
-            const [batchText, setBatchText] = useState('');
-            const [showBatch, setShowBatch] = useState(false);
-            const [msg, setMsg] = useState('');
-            const [activeTab, setActiveTab] = useState('words'); 
-            const [deletingId, setDeletingId] = useState(null);
-            const [confirmId, setConfirmId] = useState(null);
+        const AdminPanel = ({ words, setWords, onBack, onRefresh }) => {
+            const [newWord, setNewWord] = useState({ word: '', meaning: '', type: 'n.' });
+            const [currentTag, setCurrentTag] = useState('L1'); 
+            const [smartInput, setSmartInput] = useState('');
+            const [batchText, setBatchText] = useState('');
+            const [showBatch, setShowBatch] = useState(false);
+            const [msg, setMsg] = useState('');
+            const [activeTab, setActiveTab] = useState('words'); 
+            const [deletingId, setDeletingId] = useState(null);
+            const [confirmId, setConfirmId] = useState(null);
 
-            // C: Smart Input Logic
-            const parseSmartInput = (text) => {
-                const match = text.match(/^([a-zA-Z\s\-\']+)(.*)/);
-                if (match) {
-                    let extractedWord = match[1].trim();
-                    let extractedRest = match[2].trim();
-                    let extractedType = 'n.';
+            // C: Smart Input Logic
+            const parseSmartInput = (text) => {
+                const match = text.match(/^([a-zA-Z\s\-\']+)(.*)/);
+                if (match) {
+                    let extractedWord = match[1].trim();
+                    let extractedRest = match[2].trim();
+                    let extractedType = 'n.';
 
-                    const posMatch = extractedRest.match(/(.*)\s+([a-zA-Z]+\.?)$/);
-                    
-                    if (posMatch) {
-                        extractedRest = posMatch[1].trim();
-                        extractedType = posMatch[2].trim();
-                    }
+                    const posMatch = extractedRest.match(/(.*)\s+([a-zA-Z]+\.?)$/);
+                    
+                    if (posMatch) {
+                        extractedRest = posMatch[1].trim();
+                        extractedType = posMatch[2].trim();
+                    }
 
-                    if(extractedWord) {
-                        setNewWord({ word: extractedWord, meaning: extractedRest, type: extractedType });
-                    }
-                } else if (!text) {
-                    setNewWord({ word: '', meaning: '', type: 'n.' });
-                }
-            };
+                    if(extractedWord) {
+                        setNewWord({ word: extractedWord, meaning: extractedRest, type: extractedType });
+                    }
+                } else if (!text) {
+                    setNewWord({ word: '', meaning: '', type: 'n.' });
+                }
+            };
 
-            const handleSmartSubmit = (e) => {
-                e.preventDefault();
-                if(newWord.word) {
-                    handleAdd(e);
-                    setSmartInput('');
-                }
-            };
+            const handleSmartSubmit = (e) => {
+                e.preventDefault();
+                if(newWord.word) {
+                    handleAdd(e);
+                    setSmartInput('');
+                }
+            };
 
-            // A: Batch Import Logic
-            const handleBatchImport = async () => {
-                if(!batchText.trim()) return;
-                const lines = batchText.split('\n');
-                let count = 0;
-                const batch = db.batch();
-                const collectionRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('words');
+            // A: Batch Import Logic
+            const handleBatchImport = async () => {
+                if(!batchText.trim()) return;
+                const lines = batchText.split('\n');
+                let count = 0;
+                const batch = db.batch();
+                const collectionRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('words');
 
-                lines.forEach(line => {
-                    if(!line.trim()) return;
-                    let word, meaning, type = 'n.';
-                    
-                    if (line.includes('\t')) {
-                        const parts = line.split('\t');
-                        word = parts[0]?.trim();
-                        meaning = parts[1]?.trim();
-                        if(parts[2] && parts[2].trim()) type = parts[2].trim();
-                    } else {
-                        const match = line.match(/^([a-zA-Z\s\-\']+)(.*)/);
-                        if(match) {
-                            word = match[1].trim();
-                            let rest = match[2].trim();
-                            const posMatch = rest.match(/(.*)\s+([a-zA-Z]+\.?)$/);
-                            if (posMatch) {
-                                meaning = posMatch[1].trim();
-                                type = posMatch[2].trim();
-                            } else {
-                                meaning = rest;
-                            }
-                        }
-                    }
-
-                    if(word && meaning) {
-                        const docRef = collectionRef.doc();
-                        batch.set(docRef, { id: Date.now().toString() + count, word, meaning, type, chapter: currentTag || 'L1' });
-                        count++;
-                    }
-                });
-
-                if(count > 0) {
-                    try {
-                        await batch.commit();
-                        setMsg(`IMPORTED ${count} ITEMS to ${currentTag}`);
-                        setBatchText('');
-                        setShowBatch(false);
-                        setTimeout(() => setMsg(''), 2000);
-                    } catch(e) {
-                        setMsg('BATCH ERROR');
-                    }
-                }
-            };
-
-            const handleAdd = async (e) => {
-                e?.preventDefault();
-                if(!newWord.word) return;
-                const item = { ...newWord, id: Date.now().toString(), chapter: currentTag || 'L1' };
-                
-                if(db) try { 
-                    await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('words').add(item); 
-                    setMsg('SAVED TO ' + (currentTag || 'L1')); 
-                } catch(e){ setMsg('ERROR: ' + e.message); }
-                
-                setNewWord({ word: '', meaning: '', type: 'n.' });
-                setTimeout(() => setMsg(''), 2000);
-            };
-
-            const handleDelete = async (firestoreId) => {
-                if (confirmId !== firestoreId) {
-                    setConfirmId(firestoreId);
-                    setTimeout(() => setConfirmId(null), 3000); 
-                    return;
-                }
-                setDeletingId(firestoreId);
-                setWords(prev => prev.filter(w => w.firestoreId !== firestoreId)); 
-
-                if(db && firestoreId) {
-                    try {
-                        await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('words').doc(firestoreId).delete();
-                        setMsg("DELETED");
-                    } catch(e) { console.error(e); }
-                }
-                setDeletingId(null);
-                setConfirmId(null);
-                setTimeout(() => setMsg(''), 2000);
-            };
-
-            return (
-                <div className="min-h-screen p-4 bg-purple-50">
-                    <div className="lace-card p-6 max-w-4xl mx-auto" style={{borderColor:'#d8b4fe'}}>
-                        <div className="flex justify-between mb-6">
-                            <h2 className="text-2xl font-bold text-purple-500">Teacher's Desk 💜</h2>
-                            <button onClick={onBack} className="px-4 py-1 rounded-full border border-gray-300">Exit</button>
-                        </div>
-
-                        <div className="grid md:grid-cols-3 gap-6">
-                            {/* 改用紫色卡片 */}
-                            <div className="lace-card p-4 h-fit sticky top-4 z-20" style={{borderColor: '#d8b4fe', margin: '0'}}>
-                                <h3 className="text-purple-600 text-sm font-bold mb-2 flex items-center gap-2">
-                                    Add New Word
-                                </h3>
-
-                                {/* CHAPTER SETTING */}
-                                <div className="mb-4 bg-purple-50 p-3 rounded-2xl border border-purple-100">
-                                    <label className="text-[10px] text-purple-600/70 font-bold block mb-1">CHAPTER TAG</label>
-                                    <input 
-                                        value={currentTag} 
-                                        onChange={e => setCurrentTag(e.target.value)} 
-                                        className="w-full bg-white border-2 border-purple-200 text-purple-600 p-2 text-center font-bold rounded-xl outline-none focus:border-purple-400"
-                                    />
-                                </div>
-                                
-                                {/* C: SMART INPUT */}
-                                <div className="mb-4">
-                                    <form onSubmit={handleSmartSubmit}>
-                                        <input 
-                                            value={smartInput}
-                                            onChange={(e) => { 
-                                                setSmartInput(e.target.value); 
-                                                parseSmartInput(e.target.value); 
-                                            }}
-                                            placeholder="e.g. apple 蘋果 n." 
-                                            className="w-full bg-white border-2 border-purple-300 p-3 text-gray-700 text-sm rounded-xl outline-none focus:ring-2 focus:ring-purple-200 transition-all placeholder-gray-300"
-                                        />
-                                    </form>
-                                    <div className="text-[10px] text-gray-400 mt-1 text-right">Auto-fills fields below</div>
-                                </div>
-
-                                {/* Manual Fields */}
-                                <form onSubmit={handleAdd} className="flex flex-col gap-2 p-3 bg-white/50 border border-white rounded-2xl">
-                                    <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Preview</div>
-                                    <input value={newWord.word} onChange={e=>setNewWord({...newWord, word:e.target.value})} placeholder="English" className="w-full border p-2 rounded mb-2"/>
-                                    <input value={newWord.meaning} onChange={e=>setNewWord({...newWord, meaning:e.target.value})} placeholder="Chinese" className="w-full border p-2 rounded mb-2"/>
-                                    <button className="w-full bg-purple-400 text-white py-2 rounded-lg font-bold hover:bg-purple-500">
-                                        ADD WORD +
-                                    </button>
-                                    {msg && <div className="text-center text-xs font-bold text-orange-400 mt-1">{msg}</div>}
-                                </form>
-
-                                {/* A: BATCH IMPORT TOGGLE */}
-                                <div className="mt-4 pt-4 border-t border-purple-100">
-                                    <button 
-                                        onClick={() => setShowBatch(!showBatch)} 
-                                        className="w-full flex items-center justify-center gap-2 text-xs text-purple-500 font-bold hover:text-purple-700 p-2 transition-all"
-                                    >
-                                        <Upload className="w-3 h-3" /> {showBatch ? 'Close Batch' : 'Batch Import (Excel)'}
-                                    </button>
-                                    
-                                    {showBatch && (
-                                        <div className="mt-2">
-                                            <div className="text-[10px] text-gray-400 mb-1">Paste Excel Data Here</div>
-                                            <textarea 
-                                                value={batchText}
-                                                onChange={e => setBatchText(e.target.value)}
-                                                className="w-full h-32 bg-white border border-gray-200 rounded-xl p-2 text-xs text-gray-600 font-mono outline-none"
-                                                placeholder={`Examples:\napple\t蘋果\trun\t跑\tv.\nbook\t書本`}
-                                            />
-                                            <button onClick={handleBatchImport} className="w-full mt-2 bg-gray-600 text-white rounded-lg py-2 text-xs hover:bg-gray-700 font-bold">
-                                                Process Data
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="md:col-span-2 space-y-2 pb-10">
-                                <div className="flex justify-between items-end mb-2 border-b border-gray-200 pb-2">
-                                    <span className="text-gray-400 font-bold text-xs">LIBRARY CONTENTS ({words.length})</span>
-                                    <div className="flex items-center gap-2">
-                                        <button onClick={onRefresh} className="text-xs text-blue-400 hover:text-blue-600 bg-white border border-blue-200 rounded-full px-3 py-1 flex items-center gap-1 font-bold">
-                                            <Refresh className="w-3 h-3" /> Refresh
-                                        </button>
-                                    </div>
-                                </div>
-                                <div className="max-h-[80vh] overflow-y-auto space-y-2">
-                                    {words.slice().reverse().map(w => (
-                                        <div key={w.firestoreId || w.id} className="bg-white rounded-2xl p-3 flex justify-between items-center group shadow-sm border border-gray-100 hover:border-blue-200 transition-all">
-                                            <div className="flex-1">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-[10px] bg-blue-100 text-blue-500 px-2 py-0.5 rounded-full font-bold">{w.chapter || 'Gen'}</span>
-                                                    <div className="font-bold text-gray-700 text-lg">{w.word}</div>
-                                                </div>
-                                                <div className="text-xs text-gray-400 mt-1 pl-1"><span className="text-blue-300 font-bold">{w.type}</span> {w.meaning}</div>
-                                            </div>
-                                            <button 
-                                                onClick={() => handleDelete(w.firestoreId)} 
-                                                className={`ml-2 p-2 rounded-full transition-all w-10 h-10 flex items-center justify-center
-                                                    ${confirmId === w.firestoreId 
-                                                        ? 'bg-red-500 text-white shadow-md' 
-                                                        : 'text-gray-300 hover:bg-red-50 hover:text-red-400'
-                                                    }`}
-                                                title="Delete"
-                                            >
-                                                {deletingId === w.firestoreId ? <div className="spin-slow w-4 h-4 border-2 border-white rounded-full border-t-transparent"></div> : (confirmId === w.firestoreId ? '!' : <Trash2 className="w-4 h-4"/>)}
-                                            </button>
-                                        </div>
-                                    ))}
-                                    {words.length === 0 && <div className="text-gray-400 text-center py-10 font-bold bg-white rounded-3xl border border-dashed border-gray-200">Library is empty... 😴</div>}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )
-        };
-
-        const App = () => {
-            const [user, setUser] = useState(null);
-            const [view, setView] = useState('login');
-            const [selectedMode, setSelectedMode] = useState(null);
-            const [words, setWords] = useState([]);
-            const [activeWords, setActiveWords] = useState([]);
-            const [reload, setReload] = useState(0);
-
-            useEffect(() => {
-                if(auth) auth.signInAnonymously().then(u => setUser('Student'));
-            }, []);
-
-            useEffect(() => {
-                if(db) {
-                    const unsub = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('words').onSnapshot(snap => {
-                        const d = snap.docs.map(doc => ({firestoreId:doc.id, ...doc.data()}));
-                        if(d.length) setWords(d);
-                        else {
-                            // Seed data if empty
-                             if (!localStorage.getItem('seeded')) {
-                                const batch = db.batch();
-                                const ref = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('words');
-                                DEFAULT_WORDS.forEach(w => batch.set(ref.doc(), w));
-                                batch.commit();
-                                localStorage.setItem('seeded', 'true');
-                            }
-                        }
-                    });
-                    return () => unsub();
-                }
-            }, [reload]);
-
-            const handleLogin = (name) => { setUser(name); setView(name==='admin'?'admin':'menu'); };
-            const handleMode = (m) => { setSelectedMode(m); setView('chapter'); };
-            const handleChapter = (c) => { 
-                const w = c==='ALL' ? words : words.filter(i=>(i.chapter||'General')===c);
-                if(w.length) { setActiveWords(w); setView(selectedMode); }
-                else alert('Empty!');
-            };
-
-            return (
-                <div className="font-sans text-gray-600">
-                    {view==='login' && <LoginScreen onLogin={handleLogin}/>}
-                    {view==='menu' && <MainMenu user={user} onSelectMode={handleMode} onLogout={()=>setView('login')}/>}
-                    {view==='chapter' && <ChapterSelect words={words} onSelectChapter={handleChapter} onBack={()=>setView('menu')}/>}
-                    {view==='practice' && <PracticeMode activeWords={activeWords} onBack={()=>setView('menu')}/>}
-                    {view==='game' && <GameMode user={user} activeWords={activeWords} onBack={()=>setView('menu')} onSaveScore={()=>{}}/>}
-                    {view==='admin' && <AdminPanel words={words} onBack={()=>setView('login')} onRefresh={()=>setReload(p=>p+1)}/>}
-                </div>
-            );
-        };
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
-</body>
-</html>
+                lines.forEach(line => {
+                    if(!line.trim()) return;
+                    let word, meaning, type = 'n.';
+                    
+                    if (line.includes('\t')) {
+                        const parts = line.split('\t');
+                        word = parts[0]?.trim();
+                        meaning = parts[1]?.trim();
+                        if(parts[2] && parts[2].trim()) type = parts[2].trim();
+                    } else {
+                        const match = line.match(/^([a-zA-Z\s\-\']+)(.*)/);
+                        if(match) {
+                            word = match[1].trim();
+                            let rest = match[2].trim();
+                            const posMatch = rest.match(/(.*)\s+([a-zA-Z]+\.?)$/
