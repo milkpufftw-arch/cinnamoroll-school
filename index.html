@@ -3,16 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinnamoroll's Word Party</title>
-    <!-- Tailwind CSS -->
+    <title>Cinnamoroll's Word Party (Fast Delete)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -218,6 +214,11 @@
         // 您的圖片設定：請確保 S__65208346.jpg 在同一個資料夾中
         const YOUR_IMAGE_URL = "./S__65208346.jpg"; 
 
+        const DEFAULT_WORDS = [
+            { id: '1', word: 'meet new people', meaning: '認識新朋友', type: 'meet (v.) / people (n.)', chapter: 'L1' },
+            { id: '2', word: 'get a bad grade', meaning: '成績不好', type: 'get (v.) / grade (n.)', chapter: 'L1' }
+        ];
+
         const LoginScreen = ({ onLogin }) => {
             const [input, setInput] = useState('');
             return (
@@ -226,16 +227,14 @@
                         <img src={YOUR_IMAGE_URL} alt="Cinnamoroll" 
                             onError={(e) => {
                                 e.target.onerror = null; 
-                                // 這裡修改為：如果找不到圖片，就顯示一張網路上的可愛大耳狗，而不是醜醜的灰格子
                                 e.target.src='https://upload.wikimedia.org/wikipedia/en/2/29/Cinnamoroll.png';
-                                // e.target.parentElement.innerHTML += '<div class="text-xs text-center text-gray-400 mt-2">請確認圖片 S__65208346.jpg 在 GitHub 倉庫中</div>';
                             }} 
                         />
                     </div>
                     
                     <div className="lace-card p-8 max-w-md w-full flex flex-col items-center">
                         <h1 className="text-3xl font-bold text-[#89cff0] mb-2 text-center" style={{fontFamily: 'Fredoka'}}>
-                            Welcome to<br/>
+                            Welcome to<br/><br>
                             <span className="text-[#f4c2c2] text-4xl" style={{textShadow: '2px 2px 0px white'}}>Word Party</span>
                         </h1>
                         <p className="text-gray-400 text-sm mb-6 bg-blue-50 px-4 py-1 rounded-full border border-blue-100">
@@ -375,7 +374,7 @@
                         <div className="text-6xl mb-4 floating">🎀</div>
                         <h2 className="text-3xl text-[#f4c2c2] font-bold mb-4" style={{fontFamily: 'Fredoka'}}>Ready?</h2>
                         <div className="text-gray-500 mb-8 bg-pink-50 p-4 rounded-xl border border-pink-100">
-                            Look at the Chinese, Type the English!<br/>
+                            Look at the Chinese, Type the English!<br/><br>
                             <span className="text-xs text-pink-400">You have 3 hearts per word ❤️</span>
                         </div>
                         <div className="flex gap-4 justify-center">
@@ -477,7 +476,7 @@
                                         {chap}
                                         <div className="text-xs font-normal text-gray-400 mt-1">{words.filter(w=>(w.chapter||'General')===chap).length} Words</div>
                                     </button>
-                                ))}
+                                ))}<
                              </div>
                         </div>
                      </div>
@@ -639,11 +638,7 @@
             };
 
             const handleDelete = async (firestoreId) => {
-                if (confirmId !== firestoreId) {
-                    setConfirmId(firestoreId);
-                    setTimeout(() => setConfirmId(null), 3000); 
-                    return;
-                }
+                // [已修改] 移除點兩下確認機制，現在按一下就會直接刪除
                 setDeletingId(firestoreId);
                 setWords(prev => prev.filter(w => w.firestoreId !== firestoreId)); 
 
@@ -758,13 +753,14 @@
                                             <button 
                                                 onClick={() => handleDelete(w.firestoreId)} 
                                                 className={`ml-2 p-2 rounded-full transition-all w-10 h-10 flex items-center justify-center
-                                                    ${confirmId === w.firestoreId 
+                                                    ${deletingId === w.firestoreId 
                                                         ? 'bg-red-500 text-white shadow-md' 
                                                         : 'text-gray-300 hover:bg-red-50 hover:text-red-400'
                                                     }`}
                                                 title="Delete"
+                                                disabled={deletingId === w.firestoreId}
                                             >
-                                                {deletingId === w.firestoreId ? <div className="spin-slow w-4 h-4 border-2 border-white rounded-full border-t-transparent"></div> : (confirmId === w.firestoreId ? '!' : <Trash2 className="w-4 h-4"/>)}
+                                                {deletingId === w.firestoreId ? <div className="spin-slow w-4 h-4 border-2 border-white rounded-full border-t-transparent"></div> : <Trash2 className="w-4 h-4"/>}
                                             </button>
                                         </div>
                                     ))}
