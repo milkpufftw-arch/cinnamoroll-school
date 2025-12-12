@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinnamoroll's Word Party (Fast Delete)</title>
+    <title>Cinnamoroll's Word Party (Fixed)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -211,7 +211,7 @@
 
         const { useState, useEffect, useRef } = React;
         
-        // 您的圖片設定：請確保 S__65208346.jpg 在同一個資料夾中
+        // 您的圖片設定
         const YOUR_IMAGE_URL = "./S__65208346.jpg"; 
 
         const DEFAULT_WORDS = [
@@ -476,7 +476,7 @@
                                         {chap}
                                         <div className="text-xs font-normal text-gray-400 mt-1">{words.filter(w=>(w.chapter||'General')===chap).length} Words</div>
                                     </button>
-                                ))}<
+                                ))}
                              </div>
                         </div>
                      </div>
