@@ -3,9 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinnamoroll's Word Party (Fixed)</title>
+    <title>Cinnamoroll's Word Party (Final Fix)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <script>
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            var errorBox = document.getElementById('error-display');
+            if(errorBox) {
+                errorBox.style.display = 'block';
+                errorBox.innerHTML += '<div style="background:red; color:white; padding:10px;">❌ 發生錯誤: ' + msg + ' (Line: ' + lineNo + ')</div>';
+            }
+            return false;
+        };
+    </script>
+
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -18,14 +29,11 @@
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Varela+Round&family=Zen+Maru+Gothic:wght@400;700&display=swap');
 
         :root {
-            /* 依據圖片吸取的配色 */
-            --cinna-blue: #89cff0;       /* 圖片中緞帶的藍 */
-            --cinna-light-blue: #d0f0fd; /* 圖片背景淺藍 */
+            --cinna-blue: #89cff0;
+            --cinna-light-blue: #d0f0fd;
             --cinna-white: #ffffff;
-            --cinna-rose: #f4c2c2;       /* 圖片中玫瑰的粉 */
-            --cinna-text: #6b8cce;       /* 深藍色文字 */
-            
-            /* 老師後台專用紫色系 */
+            --cinna-rose: #f4c2c2;
+            --cinna-text: #6b8cce;
             --teacher-purple: #d8b4fe;
             --teacher-bg: #f3e8ff;
             --teacher-text: #9333ea;
@@ -37,8 +45,6 @@
             font-family: 'Zen Maru Gothic', 'Varela Round', sans-serif;
             margin: 0;
             overflow-x: hidden;
-            
-            /* 背景圖案：模仿圖片中的玫瑰與十字縫線 */
             background-image: 
                 radial-gradient(circle, var(--cinna-white) 20%, transparent 20%),
                 radial-gradient(circle, var(--cinna-white) 20%, transparent 20%);
@@ -46,7 +52,6 @@
             background-position: 0 0, 20px 20px;
         }
 
-        /* 裝飾性漂浮背景 */
         .bg-decoration {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -56,26 +61,17 @@
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='30' font-size='20'%3E🌹%3C/text%3E%3Ctext x='40' y='50' font-size='15' fill='%2389cff0'%3E✕%3C/text%3E%3C/svg%3E");
         }
 
-        /* --- 核心卡片風格：蕾絲 + 縫線 --- */
         .lace-card {
             background: var(--cinna-white);
             border-radius: 30px;
-            /* 雙層邊框模擬蕾絲與縫線 */
             border: 3px dashed var(--cinna-blue); 
-            box-shadow: 
-                0 0 0 8px white, /* 內層白邊 */
-                0 0 0 10px var(--cinna-light-blue), /* 外層淺藍邊 */
-                0 10px 20px rgba(137, 207, 240, 0.3); /* 柔和陰影 */
+            box-shadow: 0 0 0 8px white, 0 0 0 10px var(--cinna-light-blue), 0 10px 20px rgba(137, 207, 240, 0.3);
             position: relative;
-            margin: 15px; /* 留空間給 box-shadow */
+            margin: 15px;
             transition: transform 0.3s ease;
         }
+        .lace-card:hover { transform: translateY(-5px); }
 
-        .lace-card:hover {
-            transform: translateY(-5px);
-        }
-
-        /* 卡片標題區：模仿緞帶 */
         .ribbon-header {
             background: var(--cinna-light-blue);
             margin: 10px;
@@ -89,7 +85,6 @@
             align-items: center;
         }
 
-        /* 輸入框：縫線風格 */
         .stitch-input {
             border: 2px dashed var(--cinna-blue);
             border-radius: 25px;
@@ -100,12 +95,8 @@
             font-family: 'Fredoka', sans-serif;
             transition: all 0.3s;
         }
-        .stitch-input:focus {
-            border-color: var(--cinna-rose);
-            box-shadow: 0 0 0 4px rgba(244, 194, 194, 0.3);
-        }
+        .stitch-input:focus { border-color: var(--cinna-rose); box-shadow: 0 0 0 4px rgba(244, 194, 194, 0.3); }
 
-        /* 按鈕：緞帶蝴蝶結風格 */
         .ribbon-btn {
             background: var(--cinna-blue);
             color: white;
@@ -117,37 +108,20 @@
             font-size: 1.1rem;
             cursor: pointer;
             position: relative;
-            box-shadow: 0 4px 0 #5badde; /* 立體感 */
+            box-shadow: 0 4px 0 #5badde;
             transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
         }
-        .ribbon-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 0 #5badde;
-            filter: brightness(1.05);
-        }
-        .ribbon-btn:active {
-            transform: translateY(4px);
-            box-shadow: none;
-        }
-        .ribbon-btn:disabled {
-            background: #cbd5e1;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
+        .ribbon-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 0 #5badde; filter: brightness(1.05); }
+        .ribbon-btn:active { transform: translateY(4px); box-shadow: none; }
+        .ribbon-btn:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }
 
-        .btn-rose {
-            background: var(--cinna-rose);
-            box-shadow: 0 4px 0 #e09ba0;
-        }
-        .btn-rose:hover:not(:disabled) {
-            box-shadow: 0 6px 0 #e09ba0;
-        }
+        .btn-rose { background: var(--cinna-rose); box-shadow: 0 4px 0 #e09ba0; }
+        .btn-rose:hover:not(:disabled) { box-shadow: 0 6px 0 #e09ba0; }
 
-        /* 圖片容器：加上可愛相框效果 */
         .photo-frame {
             padding: 10px;
             background: white;
@@ -156,26 +130,21 @@
             transform: rotate(-2deg);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             margin-bottom: 20px;
-            width: 280px; /* 固定寬度 */
+            width: 280px;
             height: auto;
         }
-        .photo-frame img {
-            border-radius: 15px;
-            display: block;
-            width: 100%;
-        }
+        .photo-frame img { border-radius: 15px; display: block; width: 100%; }
 
-        /* Loading 動畫 */
         .floating { animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        
-        /* Spinner */
         .spin-slow { animation: spin 2s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
+        
+        #error-display { display: none; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; }
     </style>
 </head>
 <body>
+    <div id="error-display"></div>
     <div class="bg-decoration"></div>
     <div id="root"></div>
 
@@ -202,8 +171,10 @@
         
         let auth, db, appId = 'vocabshooter'; 
         try {
-            if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
+            if (typeof firebase !== 'undefined') {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
                 auth = firebase.auth();
                 db = firebase.firestore();
             }
@@ -388,7 +359,6 @@
             if (gameState === 'end') return (
                 <div className="flex flex-col items-center justify-center min-h-screen z-50 px-4 py-10">
                     <div className="photo-frame w-48 mb-4 rotate-2">
-                        {/* 這裡也加上 fallback 機制 */}
                         <img src={YOUR_IMAGE_URL} alt="Celebration" 
                             onError={(e)=>{
                                 e.target.onerror = null; 
@@ -640,6 +610,7 @@
             const handleDelete = async (firestoreId) => {
                 // [已修改] 移除點兩下確認機制，現在按一下就會直接刪除
                 setDeletingId(firestoreId);
+                // 樂觀更新：先從畫面上拿掉，讓使用者感覺很快
                 setWords(prev => prev.filter(w => w.firestoreId !== firestoreId)); 
 
                 if(db && firestoreId) {
