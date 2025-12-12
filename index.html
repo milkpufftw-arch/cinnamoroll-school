@@ -818,7 +818,8 @@
                     {view==='chapter' && <ChapterSelect words={words} onSelectChapter={handleChapter} onBack={()=>setView('menu')}/>}
                     {view==='practice' && <PracticeMode activeWords={activeWords} onBack={()=>setView('menu')}/>}
                     {view==='game' && <GameMode user={user} activeWords={activeWords} onBack={()=>setView('menu')} onSaveScore={()=>{}}/>}
-                    {view==='admin' && <AdminPanel words={words} onBack={()=>setView('login')} onRefresh={()=>setReload(p=>p+1)}/>}
+                    {/* 這裡修正了：傳入 setWords */}
+                    {view==='admin' && <AdminPanel words={words} setWords={setWords} onBack={()=>setView('login')} onRefresh={()=>setReload(p=>p+1)}/>}
                 </div>
             );
         };
