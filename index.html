@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinnamoroll's Word Party (Fixed)</title>
+    <title>Cinnamoroll's Word Party (Final)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -14,6 +14,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <style>
+        /* 字體：圓潤可愛風 */
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Varela+Round&family=Zen+Maru+Gothic:wght@400;700&display=swap');
 
         :root {
@@ -41,35 +42,80 @@
         }
 
         .bg-decoration {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; opacity: 0.6;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.6;
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='30' font-size='20'%3E🌹%3C/text%3E%3Ctext x='40' y='50' font-size='15' fill='%2389cff0'%3E✕%3C/text%3E%3C/svg%3E");
         }
 
         .lace-card {
-            background: var(--cinna-white); border-radius: 30px; border: 3px dashed var(--cinna-blue); 
-            box-shadow: 0 0 0 8px white, 0 0 0 10px var(--cinna-light-blue), 0 10px 20px rgba(137, 207, 240, 0.3);
-            position: relative; margin: 15px; transition: transform 0.3s ease;
+            background: var(--cinna-white);
+            border-radius: 30px;
+            border: 3px dashed var(--cinna-blue); 
+            box-shadow: 
+                0 0 0 8px white,
+                0 0 0 10px var(--cinna-light-blue),
+                0 10px 20px rgba(137, 207, 240, 0.3);
+            position: relative;
+            margin: 15px;
+            transition: transform 0.3s ease;
         }
+
         .lace-card:hover { transform: translateY(-5px); }
 
         .ribbon-header {
-            background: var(--cinna-light-blue); margin: 10px; padding: 10px 20px; border-radius: 20px;
-            border: 2px dotted var(--cinna-blue); color: var(--cinna-text); font-weight: bold;
-            display: flex; justify-content: space-between; align-items: center;
+            background: var(--cinna-light-blue);
+            margin: 10px;
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 2px dotted var(--cinna-blue);
+            color: var(--cinna-text);
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .stitch-input {
-            border: 2px dashed var(--cinna-blue); border-radius: 25px; padding: 15px; outline: none;
-            color: var(--cinna-text); background: #fdfeff; font-family: 'Fredoka', sans-serif; transition: all 0.3s;
+            border: 2px dashed var(--cinna-blue);
+            border-radius: 25px;
+            padding: 15px;
+            outline: none;
+            color: var(--cinna-text);
+            background: #fdfeff;
+            font-family: 'Fredoka', sans-serif;
+            transition: all 0.3s;
         }
-        .stitch-input:focus { border-color: var(--cinna-rose); box-shadow: 0 0 0 4px rgba(244, 194, 194, 0.3); }
+        .stitch-input:focus {
+            border-color: var(--cinna-rose);
+            box-shadow: 0 0 0 4px rgba(244, 194, 194, 0.3);
+        }
 
         .ribbon-btn {
-            background: var(--cinna-blue); color: white; border: none; border-radius: 50px; padding: 12px 24px;
-            font-family: 'Fredoka', sans-serif; font-weight: bold; font-size: 1.1rem; cursor: pointer;
-            position: relative; box-shadow: 0 4px 0 #5badde; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: var(--cinna-blue);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 4px 0 #5badde;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        .ribbon-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 0 #5badde; filter: brightness(1.05); }
+        .ribbon-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #5badde;
+            filter: brightness(1.05);
+        }
         .ribbon-btn:active { transform: translateY(4px); box-shadow: none; }
         .ribbon-btn:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }
 
@@ -77,16 +123,28 @@
         .btn-rose:hover:not(:disabled) { box-shadow: 0 6px 0 #e09ba0; }
 
         .photo-frame {
-            padding: 10px; background: white; border: 2px solid var(--cinna-blue); border-radius: 20px;
-            transform: rotate(-2deg); box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; width: 280px; height: auto;
+            padding: 10px;
+            background: white;
+            border: 2px solid var(--cinna-blue);
+            border-radius: 20px;
+            transform: rotate(-2deg);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            width: 280px;
+            height: auto;
         }
-        .photo-frame img { border-radius: 15px; display: block; width: 100%; }
+        .photo-frame img {
+            border-radius: 15px;
+            display: block;
+            width: 100%;
+        }
 
         .floating { animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         
         .spin-slow { animation: spin 2s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
     </style>
 </head>
 <body>
@@ -124,6 +182,8 @@
         } catch (error) { console.error(error); }
 
         const { useState, useEffect, useRef } = React;
+        
+        // 您的圖片設定：請確保 S__65208346.jpg 在同一個資料夾中
         const YOUR_IMAGE_URL = "./S__65208346.jpg"; 
 
         const DEFAULT_WORDS = [
@@ -143,6 +203,7 @@
                             }} 
                         />
                     </div>
+                    
                     <div className="lace-card p-8 max-w-md w-full flex flex-col items-center">
                         <h1 className="text-3xl font-bold text-[#89cff0] mb-2 text-center" style={{fontFamily: 'Fredoka'}}>
                             Welcome to<br/><br>
@@ -151,9 +212,19 @@
                         <p className="text-gray-400 text-sm mb-6 bg-blue-50 px-4 py-1 rounded-full border border-blue-100">
                             Please enter your name 🎀
                         </p>
+                        
                         <form onSubmit={(e) => { e.preventDefault(); if(input.trim()) onLogin(input.trim()); }} className="w-full flex flex-col gap-4">
-                            <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Your Name..." className="stitch-input w-full text-center text-xl" autoFocus />
-                            <button className="ribbon-btn w-full">Let's Start! 🎈</button>
+                            <input 
+                                type="text" 
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                                placeholder="Your Name..."
+                                className="stitch-input w-full text-center text-xl"
+                                autoFocus
+                            />
+                            <button className="ribbon-btn w-full">
+                                Let's Start! 🎈
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -165,12 +236,19 @@
                 <div className="absolute top-4 left-4 bg-white/80 px-4 py-2 rounded-full text-sm text-[#89cff0] font-bold border-2 border-[#89cff0] shadow-sm">
                     Student: {user} 🎓
                 </div>
+                
                 <div className="text-center mb-4 mt-10">
-                    <h1 className="text-5xl font-bold text-[#89cff0]" style={{fontFamily: 'Fredoka', textShadow: '4px 4px 0px white'}}>Cloud School</h1>
+                    <h1 className="text-5xl font-bold text-[#89cff0]" style={{fontFamily: 'Fredoka', textShadow: '4px 4px 0px white'}}>
+                        Cloud School
+                    </h1>
                 </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-3xl">
                     <button onClick={() => onSelectMode('practice')} className="lace-card p-0 h-auto min-h-[16rem] group text-left flex flex-col overflow-hidden">
-                        <div className="ribbon-header"><span>Study Room</span><Book className="w-5 h-5" /></div>
+                        <div className="ribbon-header">
+                            <span>Study Room</span>
+                            <Book className="w-5 h-5" />
+                        </div>
                         <div className="p-8 flex-1 flex flex-col justify-center relative z-10">
                             <span className="text-4xl font-bold text-[#89cff0] mb-2" style={{fontFamily: 'Fredoka'}}>PRACTICE</span>
                             <span className="text-gray-400">Review your words gently!</span>
@@ -179,8 +257,12 @@
                             <Cloud className="w-40 h-40" fill="currentColor" />
                         </div>
                     </button>
+
                     <button onClick={() => onSelectMode('game')} className="lace-card p-0 h-auto min-h-[16rem] group text-left flex flex-col overflow-hidden" style={{borderColor: '#f4c2c2'}}>
-                        <div className="ribbon-header" style={{borderColor: '#f4c2c2', color: '#f4c2c2', background: '#fff0f5'}}><span>Sky Adventure</span><Star className="w-5 h-5" /></div>
+                        <div className="ribbon-header" style={{borderColor: '#f4c2c2', color: '#f4c2c2', background: '#fff0f5'}}>
+                            <span>Sky Adventure</span>
+                            <Star className="w-5 h-5" />
+                        </div>
                         <div className="p-8 flex-1 flex flex-col justify-center relative z-10">
                             <span className="text-4xl font-bold text-[#f4c2c2] mb-2" style={{fontFamily: 'Fredoka'}}>GAME</span>
                             <span className="text-gray-400">Catch the flying words!</span>
@@ -189,18 +271,21 @@
                             <Heart className="w-40 h-40" fill="currentColor" />
                         </div>
                     </button>
+                    
                      {user === 'admin' && (
                         <button onClick={() => onSelectMode('admin')} className="md:col-span-2 lace-card p-4 flex items-center justify-center gap-2 hover:bg-purple-50 transition-colors" style={{borderColor: '#d8b4fe'}}>
                             <span className="text-purple-400 font-bold tracking-widest">⚙️ TEACHER'S DASHBOARD</span>
                         </button>
                     )}
                 </div>
+
                 <button onClick={onLogout} className="mt-4 bg-white text-gray-400 hover:text-[#f4c2c2] px-6 py-2 rounded-full text-sm font-bold border-2 border-transparent hover:border-[#f4c2c2] transition-all flex items-center gap-2">
                     <Home className="w-4 h-4" /> Log Out
                 </button>
             </div>
         );
 
+        // 遊戲模式組件 (GameMode)
         const GameMode = ({ user, activeWords, onBack, onSaveScore }) => {
             const [queue, setQueue] = useState([]);
             const [currentIndex, setCurrentIndex] = useState(0);
@@ -210,6 +295,7 @@
             const [attempts, setAttempts] = useState(0);
             const [wrongWords, setWrongWords] = useState([]);
             const [gameState, setGameState] = useState('start');
+            const [exitConfirm, setExitConfirm] = useState(false);
             const inputRef = useRef(null);
 
              useEffect(() => {
@@ -220,6 +306,7 @@
                     setScore(0);
                     setWrongWords([]);
                     setAttempts(0);
+                    setExitConfirm(false);
                 }
             }, [gameState]);
 
@@ -273,6 +360,7 @@
             if (gameState === 'end') return (
                 <div className="flex flex-col items-center justify-center min-h-screen z-50 px-4 py-10">
                     <div className="photo-frame w-48 mb-4 rotate-2">
+                        {/* 這裡也加上 fallback 機制 */}
                         <img src={YOUR_IMAGE_URL} alt="Celebration" 
                             onError={(e)=>{
                                 e.target.onerror = null; 
@@ -280,6 +368,7 @@
                             }}
                         />
                     </div>
+
                     <div className="lace-card p-8 text-center max-w-md w-full" style={{borderColor: '#86efac'}}>
                         <h2 className="text-3xl text-green-500 font-bold mb-2" style={{fontFamily: 'Fredoka'}}>Congratulations!</h2>
                         <div className="text-5xl text-green-400 font-bold font-mono mb-6">{score} PTS</div>
@@ -297,12 +386,14 @@
             return (
                  <div className="flex flex-col items-center justify-center min-h-screen w-full relative z-50 p-4 py-10">
                      <div className="lace-card w-full max-w-2xl transition-all duration-300 relative">
+                        {/* Game UI */}
                         <div className="absolute -top-6 -left-2 bg-white border-2 border-blue-200 px-4 py-1 rounded-full text-blue-400 font-bold shadow-sm z-10">
                              Score: {score}
                         </div>
                         <div className="absolute -top-6 -right-2 bg-white border-2 border-pink-200 px-4 py-1 rounded-full text-pink-400 font-bold shadow-sm z-10">
                              {currentIndex + 1} / 10
                         </div>
+
                         <div className="p-12 text-center">
                             {feedback === 'failed' ? (
                                 <div className="text-red-400 font-bold text-2xl animate-pulse">The answer was: {currentWord.word}</div>
@@ -317,7 +408,18 @@
                                     </div>
                                 </>
                             )}
-                            <input ref={inputRef} type="text" value={input} onChange={e => setInput(e.target.value)} onKeyDown={(e) => { if(e.key === 'Enter') handleFire(); }} disabled={feedback === 'failed' || feedback === 'success'} className={`stitch-input w-full text-center text-2xl tracking-wider ${feedback === 'error' ? 'border-red-300 bg-red-50' : ''}`} placeholder="Type answer..." autoFocus />
+                            
+                            <input
+                                ref={inputRef}
+                                type="text"
+                                value={input}
+                                onChange={e => setInput(e.target.value)}
+                                onKeyDown={(e) => { if(e.key === 'Enter') handleFire(); }}
+                                disabled={feedback === 'failed' || feedback === 'success'}
+                                className={`stitch-input w-full text-center text-2xl tracking-wider ${feedback === 'error' ? 'border-red-300 bg-red-50' : ''}`}
+                                placeholder="Type answer..."
+                                autoFocus
+                            />
                         </div>
                         <div className="p-4 flex justify-center pb-8">
                              <button onClick={handleFire} className="ribbon-btn w-2/3">Check Answer ✨</button>
@@ -406,7 +508,9 @@
             const [batchText, setBatchText] = useState('');
             const [showBatch, setShowBatch] = useState(false);
             const [msg, setMsg] = useState('');
+            const [activeTab, setActiveTab] = useState('words'); 
             const [deletingId, setDeletingId] = useState(null);
+            const [confirmId, setConfirmId] = useState(null);
 
             // C: Smart Input Logic
             const parseSmartInput = (text) => {
@@ -415,11 +519,14 @@
                     let extractedWord = match[1].trim();
                     let extractedRest = match[2].trim();
                     let extractedType = 'n.';
+
                     const posMatch = extractedRest.match(/(.*)\s+([a-zA-Z]+\.?)$/);
+                    
                     if (posMatch) {
                         extractedRest = posMatch[1].trim();
                         extractedType = posMatch[2].trim();
                     }
+
                     if(extractedWord) {
                         setNewWord({ word: extractedWord, meaning: extractedRest, type: extractedType });
                     }
@@ -447,6 +554,7 @@
                 lines.forEach(line => {
                     if(!line.trim()) return;
                     let word, meaning, type = 'n.';
+                    
                     if (line.includes('\t')) {
                         const parts = line.split('\t');
                         word = parts[0]?.trim();
@@ -466,6 +574,7 @@
                             }
                         }
                     }
+
                     if(word && meaning) {
                         const docRef = collectionRef.doc();
                         batch.set(docRef, { id: Date.now().toString() + count, word, meaning, type, chapter: currentTag || 'L1' });
@@ -490,19 +599,20 @@
                 e?.preventDefault();
                 if(!newWord.word) return;
                 const item = { ...newWord, id: Date.now().toString(), chapter: currentTag || 'L1' };
+                
                 if(db) try { 
                     await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('words').add(item); 
                     setMsg('SAVED TO ' + (currentTag || 'L1')); 
                 } catch(e){ setMsg('ERROR: ' + e.message); }
+                
                 setNewWord({ word: '', meaning: '', type: 'n.' });
                 setTimeout(() => setMsg(''), 2000);
             };
 
             const handleDelete = async (firestoreId) => {
-                // 這裡就是關鍵修復：
-                // 1. 移除了「點兩下確認」的機制，現在點一下就會執行。
-                // 2. 使用 setWords 讓畫面馬上消失 (樂觀更新)。
+                // FIXED: Direct delete without confirmation
                 setDeletingId(firestoreId);
+                // FIXED: Optimistic update (remove immediately from UI)
                 setWords(prev => prev.filter(w => w.firestoreId !== firestoreId)); 
 
                 if(db && firestoreId) {
@@ -512,6 +622,7 @@
                     } catch(e) { console.error(e); }
                 }
                 setDeletingId(null);
+                setConfirmId(null);
                 setTimeout(() => setMsg(''), 2000);
             };
 
@@ -682,7 +793,7 @@
                     {view==='chapter' && <ChapterSelect words={words} onSelectChapter={handleChapter} onBack={()=>setView('menu')}/>}
                     {view==='practice' && <PracticeMode activeWords={activeWords} onBack={()=>setView('menu')}/>}
                     {view==='game' && <GameMode user={user} activeWords={activeWords} onBack={()=>setView('menu')} onSaveScore={()=>{}}/>}
-                    {/* 這裡修復了最大的 Bug：補上了 setWords={setWords} */}
+                    {/* FIXED: Passed setWords so delete works */}
                     {view==='admin' && <AdminPanel words={words} setWords={setWords} onBack={()=>setView('login')} onRefresh={()=>setReload(p=>p+1)}/>}
                 </div>
             );
